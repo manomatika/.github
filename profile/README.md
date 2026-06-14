@@ -65,9 +65,9 @@ no recipe *content* and hosts no product releases — it hands artifacts off to
 
 | Layer | Role |
 |---|---|
-| **ManoMatika** | Product authority — pins a validated component triple; owns the recipes, manifest, audit log, product release, and QA gate |
+| **manomatika** | Product authority — pins a validated component triple; owns the recipes, manifest, audit log, product release, and QA gate |
 | **matika** | Plugin-agnostic FastAPI framework — runtime, auth, RBAC, menus |
-| **AppLugs** | Plugins providing all business-domain features (e.g. eyerate) |
+| **applugs** | Plugins providing all business-domain features (e.g. eyerate) |
 | **ahimsa** | Recipe engine — builds and validates an application from pinned component versions |
 
 ## Compatibility & Release Discipline
