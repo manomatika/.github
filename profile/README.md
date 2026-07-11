@@ -57,9 +57,11 @@ declares the exact matika version and exact AppLug versions that compose an
 application, with no ranges and no wildcards. The validator enforces cross-component
 version consistency, verifies remote `applug.json` manifests at the declared GitHub
 tag, and checks `RELEASES.md` ↔ git-tag drift. The build pipeline produces installer
-artifacts (macOS DMG / Windows EXE) on demand via `workflow_dispatch`. ahimsa owns
-no recipe *content* and hosts no product releases — it hands artifacts off to
-`manomatika`. (Code-signing and notarization are on the roadmap.)
+artifacts (macOS DMG / Windows EXE), triggered either on demand via
+`workflow_dispatch` or by an rc/final tag push (classified into an rc or final
+release channel). ahimsa owns no recipe *content* and hosts no product
+releases — it hands artifacts off to `manomatika`. (Code-signing and
+notarization are on the roadmap.)
 
 ## Mental Model
 
