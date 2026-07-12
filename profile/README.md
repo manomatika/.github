@@ -96,10 +96,15 @@ validated installer attached.
 
 ## Project Status
 
-All repositories are in active early development (v0.0.x). The first ManoMatika
-product release is **v0.0.1 = matika v0.0.4 + eyerate v0.0.4 + ahimsa v0.0.1**,
-currently in the release-engineering sequence. Backward compatibility within a
-matika minor version is mandatory.
+**ManoMatika v0.0.1 is released** (2026-07-11) — the first product release:
+**matika v0.0.4 + eyerate v0.0.4 + ahimsa v0.0.1**, QA-gate validated on macOS
+(arm64 + x86_64) and Windows, with installers available on the
+[v0.0.1 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.1).
+Installers are currently unsigned (code-signing/notarization is on the roadmap) —
+macOS: right-click → Open past Gatekeeper; Windows: SmartScreen "More info" → Run anyway.
+
+All repositories remain in active early development (v0.0.x). Backward
+compatibility within a matika minor version is mandatory.
 
 ---
 *Maintained by [Patrick James Tallman](https://github.com/pjtallman).*
