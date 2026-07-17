@@ -38,9 +38,11 @@ umbrella docs; and the QA gate a product version must pass before release.
 ### 🧩 [matika](https://github.com/manomatika/matika)
 The framework. A FastAPI host with bcrypt + JWT + OAuth auth, role-based access
 control, a server-side-filtered menu system, Alembic-managed core schema (SQLite
-dev / PostgreSQL / MySQL prod), and a published frontend package
-(`@manomatika/matika-frontend`) for AppLug UIs. The core ships with no business
-features — every page beyond login and settings is contributed by an AppLug.
+dev / PostgreSQL / MySQL prod), HTTPS by default (TLS on port 443 with an
+HTTP→HTTPS redirect and per-install CA trust), and a frontend package
+(`@manomatika/matika-frontend`) for AppLug UIs (npm publish pending). The core
+ships with no business features — every page beyond login and settings is
+contributed by an AppLug.
 
 #### 📊 [eyerate](https://github.com/manomatika/eyerate)
 The reference AppLug, and a child of matika: it declares an exact `matika_version`,
@@ -57,7 +59,7 @@ declares the exact matika version and exact AppLug versions that compose an
 application, with no ranges and no wildcards. The validator enforces cross-component
 version consistency, verifies remote `applug.json` manifests at the declared GitHub
 tag, and checks `RELEASES.md` ↔ git-tag drift. The build pipeline produces installer
-artifacts (macOS DMG / Windows EXE), triggered either on demand via
+artifacts (Linux `.deb` / macOS DMG), triggered either on demand via
 `workflow_dispatch` or by an rc/final tag push (classified into an rc or final
 release channel). ahimsa owns no recipe *content* and hosts no product
 releases — it hands artifacts off to `manomatika`. (Code-signing and
@@ -96,12 +98,17 @@ validated installer attached.
 
 ## Project Status
 
-**ManoMatika v0.0.1 is released** (2026-07-11) — the first product release:
-**matika v0.0.4 + eyerate v0.0.4 + ahimsa v0.0.1**, QA-gate validated on macOS
-(arm64 + x86_64) and Windows, with installers available on the
-[v0.0.1 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.1).
-Installers are currently unsigned (code-signing/notarization is on the roadmap) —
-macOS: right-click → Open past Gatekeeper; Windows: SmartScreen "More info" → Run anyway.
+**ManoMatika v0.0.3 is released** (2026-07-17) — the third product release:
+**matika v0.0.6 + eyerate v0.0.6 + ahimsa v0.0.3**, QA-gate validated on Linux
+x86_64 and macOS arm64, with installers available on the
+[v0.0.3 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.3).
+v0.0.3 delivers HTTPS everywhere: the installed app serves TLS on port 443 with
+an HTTP→HTTPS redirect on port 80 and per-install CA trust.
+
+As of v0.0.3 the supported platform set is **Linux x86_64** (`.deb`) and
+**macOS arm64** (`.dmg`); Windows and macOS x86_64 shipped last in v0.0.2.
+The macOS installer is currently unsigned (code-signing/notarization is on the
+roadmap) — right-click → Open past Gatekeeper on first launch.
 
 All repositories remain in active early development (v0.0.x). Backward
 compatibility within a matika minor version is mandatory.
