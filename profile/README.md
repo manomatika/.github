@@ -40,7 +40,8 @@ The framework. A FastAPI host with bcrypt + JWT + OAuth auth, role-based access
 control, a server-side-filtered menu system, Alembic-managed core schema (SQLite
 dev / PostgreSQL / MySQL prod), HTTPS by default (TLS on port 443 with an
 HTTP→HTTPS redirect and per-install CA trust), and a frontend package
-(`@manomatika/matika-frontend`) for AppLug UIs (npm publish pending). The core
+(`@manomatika/matika-frontend`, distributed via GitHub Packages) for AppLug
+UIs. The core
 ships with no business features — every page beyond login and settings is
 contributed by an AppLug.
 
