@@ -63,8 +63,9 @@ tag, and checks `RELEASES.md` ↔ git-tag drift. The build pipeline produces ins
 artifacts (Linux `.deb` / macOS DMG), triggered either on demand via
 `workflow_dispatch` or by an rc/final tag push (classified into an rc or final
 release channel). ahimsa owns no recipe *content* and hosts no product
-releases — it hands artifacts off to `manomatika`. (Code-signing and
-notarization are on the roadmap.)
+releases — it hands artifacts off to `manomatika`. (Linux `.deb` GPG signing
+lands with v0.0.4 — see **Verifying Releases** below; macOS
+code-signing/notarization is on the roadmap.)
 
 ## Mental Model
 
@@ -113,6 +114,22 @@ roadmap) — right-click → Open past Gatekeeper on first launch.
 
 All repositories remain in active early development (v0.0.x). Backward
 compatibility within a matika minor version is mandatory.
+
+## Verifying Releases
+
+Beginning with ManoMatika v0.0.4 (the next product release), the Linux `.deb`
+installer ships with a detached GPG signature (`<installer>.deb.asc`)
+verifiable against the ManoMatika release signing key:
+
+**Fingerprint:** `B788 2A3A 2C0E FEB7 0BAC 8C8D B3BE 35EB A0BB 7ECF`
+(`ManoMatika Releases <manomatika.tech@gmail.com>`, RSA-4096, expires
+2028-07-18)
+
+The full armored public key and step-by-step verification instructions live in
+[docs/verifying-releases.md](https://github.com/manomatika/manomatika/blob/main/docs/verifying-releases.md)
+in the product-authority repo. Cross-check the fingerprint there against this
+page before trusting a key imported from anywhere else. Releases through
+v0.0.3 predate the signing key and are unsigned.
 
 ---
 *Maintained by [Patrick James Tallman](https://github.com/pjtallman).*
