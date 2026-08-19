@@ -100,17 +100,17 @@ validated installer attached.
 
 ## Project Status
 
-**ManoMatika v0.0.4 is released** (2026-08-06) — the fourth product release:
-**matika v0.0.7 + eyerate v0.0.7 + ahimsa v0.0.4**, QA-gate validated on Linux
+**ManoMatika v0.0.5 is released** (2026-08-18) — the fifth product release:
+**matika v0.0.8 + eyerate v0.0.8 + ahimsa v0.0.5**, QA-gate validated on Linux
 x86_64 and macOS arm64, with installers available on the
-[v0.0.4 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.4).
-v0.0.4 adds detached GPG signing for the Linux `.deb` installer — see
+[v0.0.5 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.5).
+The Linux `.deb` installer ships with a detached GPG signature — see
 **Verifying Releases** below.
 
 As of v0.0.3 the supported platform set is **Linux x86_64** (`.deb`) and
 **macOS arm64** (`.dmg`); Windows and macOS x86_64 shipped last in v0.0.2.
-The macOS installer is currently unsigned (code-signing/notarization is on the
-roadmap) — right-click → Open past Gatekeeper on first launch.
+The macOS installer is currently unnotarized (code-signing/notarization is on
+the roadmap) — right-click → Open past Gatekeeper on first launch.
 
 All repositories remain in active early development (v0.0.x). Backward
 compatibility within a matika minor version is mandatory.
