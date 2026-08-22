@@ -15,11 +15,12 @@ contract for everything else.
 ```
 manomatika          product authority — the product is a pinned, QA-validated component triple
 ├── matika          the framework (plugin-agnostic FastAPI host)
-│   └── eyerate     reference AppLug (plugin; loads into and depends on matika)
+│   ├── eyerate     reference AppLug (plugin; loads into and depends on matika)
+│   └── metta       reference AppLug (plugin; loads into and depends on matika)
 └── ahimsa          recipe engine (build / validation / release mechanism)
 ```
 
-`matika` + `eyerate` are the **runtime stack** — the application that actually
+`matika` + its AppLugs (`eyerate`, `metta`) are the **runtime stack** — the application that actually
 runs. `ahimsa` is **mechanism**: it assembles and validates the application from
 the outside, but is not part of the running app. `manomatika` is the **authority**
 that pins a specific, validated combination and releases it as the product.
@@ -54,6 +55,16 @@ providers (Yahoo / Finnhub / Alpha Vantage), and plugin-managed database tables.
 Adds financial security tracking (stocks, bonds, ETFs, mutual funds) to any matika
 host. The canonical example to learn the AppLug system from.
 
+#### 🙏 [metta](https://github.com/manomatika/metta)
+The second reference AppLug, and a child of matika. Where eyerate demonstrates
+the full plugin contract *with* authorization, metta demonstrates an AppLug
+that uses **none**: its `applug.json` declares no `requires`, no `optional`,
+and no `permissions[]`, so it composes into a recipe with no `sysplugs[]` at
+all — no identity, no authorization. Its single page displays "May all beings
+be happy and safe!" It still ships every artifact a real AppLug ships —
+manifest, routes, templates, `en`/`es` locales, tests, CI — just none of the
+capability declarations.
+
 ### 🛠️ [ahimsa](https://github.com/manomatika/ahimsa)
 The recipe **engine** — build, validation, and release *mechanism* only. A recipe
 declares the exact matika version and exact AppLug versions that compose an
@@ -73,7 +84,7 @@ code-signing/notarization is on the roadmap.)
 |---|---|
 | **manomatika** | Product authority — pins a validated component triple; owns the recipes, manifest, audit log, product release, and QA gate |
 | **matika** | Plugin-agnostic FastAPI framework — runtime, auth, RBAC, menus |
-| **applugs** | Plugins providing all business-domain features (e.g. eyerate) |
+| **applugs** | Plugins providing all business-domain features (e.g. eyerate, metta) |
 | **ahimsa** | Recipe engine — builds and validates an application from pinned component versions |
 
 ## Compatibility & Release Discipline
