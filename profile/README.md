@@ -1,62 +1,108 @@
 # ManoMatika
 
 ManoMatika is a plugin-extensible application framework ecosystem. The product,
-**ManoMatika**, is a QA-validated, pinned triple of three component versions: the
+**ManoMatika**, is a QA-validated, pinned set of component versions: the
 **matika** framework, one or more AppLugs (plugins), and the **ahimsa** recipe
 engine that composes and validates them.
 
 The core principle: **matika itself has zero knowledge of any business domain.**
-All domain logic lives in plugins (AppLugs). The framework provides the runtime —
-auth, RBAC, menus, persistence, CSRF, i18n, rate limiting — and a clean plugin
-contract for everything else.
+All domain logic lives in plugins (AppLugs). The framework provides the
+runtime — pages, menus, persistence, CSRF, i18n, rate limiting — and a clean
+plugin contract for everything else. In the emerging SysPlug architecture (in
+development for v0.0.6, below), even identity and authorization stop being
+hard-wired framework services and become system plugins the recipe composes
+in — or leaves out.
 
 ## Hierarchy
 
 ```
-manomatika          product authority — the product is a pinned, QA-validated component triple
+manomatika          product authority — the product is a pinned, QA-validated component set
 ├── matika          the framework (plugin-agnostic FastAPI host)
-│   ├── eyerate     reference AppLug for authorization-using plugins (loads into and depends on matika)
-│   └── metta       reference AppLug for no-authorization plugins (loads into and depends on matika)
+│   ├── sysplugs    system plugins shipped in matika's tree — sys-identity, sys-authorization
+│   ├── eyerate     reference AppLug for authorization-using plugins (requires identity + authorization)
+│   └── metta       reference AppLug for no-authorization plugins (requires nothing)
 └── ahimsa          recipe engine (build / validation / release mechanism)
 ```
 
-`matika` + its AppLugs (`eyerate`, `metta`) are the **runtime stack** — the application that actually
-runs. `ahimsa` is **mechanism**: it assembles and validates the application from
-the outside, but is not part of the running app. `manomatika` is the **authority**
-that pins a specific, validated combination and releases it as the product.
+`matika` + its SysPlugs and AppLugs are the **runtime stack** — the application
+that actually runs. `ahimsa` is **mechanism**: it assembles and validates the
+application from the outside, but is not part of the running app. `manomatika`
+is the **authority** that pins a specific, validated combination and releases
+it as the product.
+
+## SysPlugs — the emerging composition architecture
+
+*In development for v0.0.6, unreleased. Shipped releases through v0.0.5 carry
+identity and authorization hard-wired in the framework core.*
+
+Historically matika's users, roles, permissions, and login machinery were
+mandatory core services: every install got them whether its plugins needed
+them or not. The SysPlug architecture makes that a **recipe decision**:
+
+- Core defines two abstract **capabilities**, each behind a provider
+  interface: `identity` (users, sessions, login, password policy, OIDC,
+  WebAuthn, TOTP) and `authorization` (roles, permissions, the access gate,
+  menu visibility).
+- **SysPlugs** — system plugins — provide them. The first two, shipped from
+  matika's own tree and versioned with the framework: **sys-identity** and
+  **sys-authorization**.
+- Every AppLug declares what it needs in its manifest: eyerate requires
+  `["identity", "authorization"]`; metta requires `[]` — explicitly nothing,
+  which is what makes its pages public. Requirements name abstract
+  capabilities, never plugin names.
+- The **recipe** gains a `sysplugs[]` section, pinned and versioned exactly
+  like `applugs[]`. ahimsa's validator resolves every requirement against the
+  recipe's providers at **build time, fail-fast**: an AppLug requiring a
+  capability no SysPlug in the recipe provides is a build error, never a
+  runtime surprise.
+- **No runtime feature flags.** When a capability's SysPlug is absent, core
+  wires an always-present default provider (anonymous identity, allow-all
+  authorization). That is safe by construction: the resolver guarantees no
+  installed AppLug ever asked for enforcement. Code never branches on "is
+  auth loaded?".
+
+The same components then yield three buildable compositions: an authenticated
+application (the reference recipe — today's shipped behavior, unchanged), a
+fully public application with no login at all, and a mixed application where
+public AppLugs are reachable anonymously and login is offered contextually
+for the gated ones.
 
 ## Repositories
 
 ### 📦 [manomatika](https://github.com/manomatika/manomatika)
-The **product authority**. A ManoMatika release is not any single repo's release —
-it is this repository naming an exact set of component versions built and validated
-together. It owns: the recipes that compose a product; the audit log
-(`release-log.yaml` source + generated `RELEASES.md`); the per-version
-manifest/BOM (each component pinned by **tag and resolved commit SHA**); the
-product release and the single hosted installer binary; the cross-component
-umbrella docs; and the QA gate a product version must pass before release.
+The **product authority**. A ManoMatika release is not any single repo's
+release — it is this repository naming an exact set of component versions
+built and validated together. It owns: the recipes that compose a product;
+the audit log (`release-log.yaml` source + generated `RELEASES.md`); the
+per-version manifest/BOM (each component pinned by **tag and resolved commit
+SHA**); the product release and the hosted installer binaries; the
+cross-component umbrella docs; and the QA gate a product version must pass
+before release.
 
 ### 🧩 [matika](https://github.com/manomatika/matika)
-The framework. A FastAPI host with bcrypt + JWT + OAuth auth, role-based access
-control, a server-side-filtered menu system, Alembic-managed core schema (SQLite
-dev / PostgreSQL / MySQL prod), HTTPS by default (TLS on port 443 with an
-HTTP→HTTPS redirect and per-install CA trust), and a frontend package
-(`@manomatika/matika-frontend`, distributed via GitHub Packages) for AppLug
-UIs. The core
-ships with no business features — every page beyond login and settings is
-contributed by an AppLug.
+The framework. A plugin-agnostic FastAPI host: server-side-filtered menu
+system, Alembic-managed core schema (SQLite dev / PostgreSQL / MySQL prod),
+HTTPS by default (TLS on port 443 with an HTTP→HTTPS redirect and per-install
+CA trust), i18n, rate limiting, CSRF, and a frontend package
+(`@manomatika/matika-frontend`, distributed via GitHub Packages) for plugin
+UIs. Identity and access control — bcrypt + JWT + OAuth login, role-based
+access — ship today as core services and are moving into the sys-identity
+and sys-authorization SysPlugs, which live in matika's own `sysplugs/` tree.
+The core ships no business features — every business page is contributed by
+an AppLug.
 
 #### 📊 [eyerate](https://github.com/manomatika/eyerate)
-The reference AppLug for plugins that use authorization, and a child of matika: it
-declares an exact `matika_version`, loads into the framework at runtime, and
-consumes `@manomatika/matika-frontend`. Its `applug.json` hard-declares
-`requires: ["identity", "authorization"]` and ships a `permissions[]` block
-mapping routes to roles. It demonstrates the full plugin contract end-to-end:
-manifest, consolidated menu file, role-scoped routes, Jinja2 templates, TypeScript
-admin pages, pluggable data providers (Yahoo / Finnhub / Alpha Vantage), and
-plugin-managed database tables. Adds financial security tracking (stocks, bonds,
-ETFs, mutual funds) to any matika host — the fuller worked example for learning
-the AppLug system, and the model for any AppLug that needs identity and roles.
+The reference AppLug for plugins that use authorization, and a child of
+matika: it declares an exact `matika_version`, loads into the framework at
+runtime, and consumes `@manomatika/matika-frontend`. Its `applug.json`
+hard-declares `requires: ["identity", "authorization"]` and ships a
+`permissions[]` block mapping routes to roles. It demonstrates the full
+plugin contract end-to-end: manifest, consolidated menu file, role-scoped
+routes, Jinja2 templates, TypeScript admin pages, pluggable data providers
+(Yahoo / Finnhub / Alpha Vantage), and plugin-managed database tables. Adds
+financial security tracking (stocks, bonds, ETFs, mutual funds) to any
+matika host — the fuller worked example for learning the AppLug system, and
+the model for any AppLug that needs identity and roles.
 
 #### 🙏 [metta](https://github.com/manomatika/metta)
 The reference AppLug for plugins that use no authentication or authorization,
@@ -72,48 +118,54 @@ roles. (metta is unreleased, in-progress work — not yet part of a shipped
 ManoMatika product.)
 
 ### 🛠️ [ahimsa](https://github.com/manomatika/ahimsa)
-The recipe **engine** — build, validation, and release *mechanism* only. A recipe
-declares the exact matika version and exact AppLug versions that compose an
-application, with no ranges and no wildcards. The validator enforces cross-component
-version consistency, verifies remote `applug.json` manifests at the declared GitHub
-tag, and checks `RELEASES.md` ↔ git-tag drift. The build pipeline produces installer
+The recipe **engine** — build, validation, and release *mechanism* only. A
+recipe declares the exact matika version, SysPlug set, and AppLug versions
+that compose an application, with no ranges and no wildcards. The validator
+enforces cross-component version consistency, verifies remote `applug.json`
+manifests at the declared GitHub tag, checks `RELEASES.md` ↔ git-tag drift,
+and — in the emerging SysPlug architecture — resolves every AppLug's required
+capabilities against the recipe's SysPlug providers, failing the build on any
+unsatisfied or ambiguous requirement. The build pipeline produces installer
 artifacts (Linux `.deb` / macOS DMG), triggered either on demand via
-`workflow_dispatch` or by an rc/final tag push (classified into an rc or final
-release channel). ahimsa owns no recipe *content* and hosts no product
+`workflow_dispatch` or by an rc/final tag push (classified into an rc or
+final release channel). ahimsa owns no recipe *content* and hosts no product
 releases — it hands artifacts off to `manomatika`. (Linux `.deb` GPG signing
-lands with v0.0.4 — see **Verifying Releases** below; macOS
+shipped with v0.0.4 — see **Verifying Releases** below; macOS
 code-signing/notarization is on the roadmap.)
 
 ## Mental Model
 
 | Layer | Role |
 |---|---|
-| **manomatika** | Product authority — pins a validated component triple; owns the recipes, manifest, audit log, product release, and QA gate |
-| **matika** | Plugin-agnostic FastAPI framework — runtime, auth, RBAC, menus |
+| **manomatika** | Product authority — pins a validated component set; owns the recipes, manifest, audit log, product release, and QA gate |
+| **matika** | Plugin-agnostic FastAPI framework — runtime, pages, menus, plugin contract |
+| **sysplugs** | System plugins providing framework capabilities — identity, authorization — composed per recipe (emerging, v0.0.6) |
 | **applugs** | Plugins providing all business-domain features, each a reference implementation of a kind of AppLug — e.g. eyerate (uses authorization), metta (uses none) — with more added as the project continues |
 | **ahimsa** | Recipe engine — builds and validates an application from pinned component versions |
 
 ## Compatibility & Release Discipline
 
-Every AppLug declares the exact `matika_version` it was built and tested against.
-matika checks this at plugin load and refuses incompatible AppLugs. Recipes enforce
-the same invariant statically: all AppLugs in a recipe must declare an identical
-`matika_version`, and that version must match the bundled matika.
+Every AppLug declares the exact `matika_version` it was built and tested
+against. matika checks this at plugin load and refuses incompatible AppLugs.
+Recipes enforce the same invariant statically: all AppLugs in a recipe must
+declare an identical `matika_version`, and that version must match the
+bundled matika.
 
-`VERSION` is the single source of truth for version metadata in each repo; tooling
-propagates it to all version-bearing files and detects drift in CI. Recipes pin
-each component by exact version — no ranges, no wildcards — and a product manifest
-pins each by **tag and resolved commit SHA**.
+`VERSION` is the single source of truth for version metadata in each repo;
+tooling propagates it to all version-bearing files and detects drift in CI.
+Recipes pin each component by exact version — no ranges, no wildcards — and
+the emerging `sysplugs[]` section is pinned the same way. A product manifest
+pins each component by **tag and resolved commit SHA**.
 
-`RELEASES.md` is the canonical, manomatika-wide tag log. Its human-edited source
-(`release-log.yaml`) and the generated `RELEASES.md` live in **manomatika**; ahimsa
-provides the rendering engine that produces the log from manomatika-hosted data and
-validates it bidirectionally against git tags. Entries are repo-aware
-(`## <repo> vX.Y.Z`).
+`RELEASES.md` is the canonical, manomatika-wide tag log. Its human-edited
+source (`release-log.yaml`) and the generated `RELEASES.md` live in
+**manomatika**; ahimsa provides the rendering engine that produces the log
+from manomatika-hosted data and validates it bidirectionally against git
+tags. Entries are repo-aware (`## <repo> vX.Y.Z`).
 
-Components ship as **prereleases**; nothing is blessed before QA. Only after a
-candidate passes the QA gate is the **ManoMatika product release** cut, with the
-validated installer attached.
+Components ship as **prereleases**; nothing is blessed before QA. Only after
+a candidate passes the QA gate is the **ManoMatika product release** cut,
+with the validated installer attached.
 
 ## Project Status
 
@@ -123,6 +175,10 @@ x86_64 and macOS arm64, with installers available on the
 [v0.0.5 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.5).
 The Linux `.deb` installer ships with a detached GPG signature — see
 **Verifying Releases** below.
+
+In development: **v0.0.6** introduces the SysPlug architecture described
+above — identity and authorization as recipe-composed system plugins, the
+metta reference AppLug, and multi-composition build validation.
 
 As of v0.0.3 the supported platform set is **Linux x86_64** (`.deb`) and
 **macOS arm64** (`.dmg`); Windows and macOS x86_64 shipped last in v0.0.2.
