@@ -59,15 +59,17 @@ ETFs, mutual funds) to any matika host — the fuller worked example for learnin
 the AppLug system, and the model for any AppLug that needs identity and roles.
 
 #### 🙏 [metta](https://github.com/manomatika/metta)
-The reference AppLug for plugins that use no authorization, and a child of
-matika. Where eyerate is the model for AppLugs that need identity and roles,
-metta is the model for AppLugs that need neither: its `applug.json` declares
-no `requires`, no `optional`, and no `permissions[]`, so it composes into a
-recipe with no `sysplugs[]` at all — no identity, no authorization. Its single
-page displays "May all beings be happy and safe!" It still ships every
-artifact a real AppLug ships — manifest, routes, templates, `en`/`es`
-locales, tests, CI — just none of the capability declarations. (metta is
-unreleased, in-progress work — not yet part of a shipped ManoMatika product.)
+The reference AppLug for plugins that use no authentication or authorization,
+and a child of matika. Its purpose is demonstration: it is the minimal worked
+example of an AppLug that declares no auth requirements at all — no identity,
+no roles, no `permissions[]` — so the recipe that composes it needs no auth
+sysplugs and every page it serves is public. Where eyerate shows the full
+capability surface, metta shows the floor: how small a complete, shippable
+AppLug can be while still carrying everything the contract demands — manifest,
+routes, templates, `en`/`es` locales, tests, CI. Start here to learn the
+plugin contract; graduate to eyerate when your AppLug needs identity and
+roles. (metta is unreleased, in-progress work — not yet part of a shipped
+ManoMatika product.)
 
 ### 🛠️ [ahimsa](https://github.com/manomatika/ahimsa)
 The recipe **engine** — build, validation, and release *mechanism* only. A recipe
