@@ -8,10 +8,10 @@ engine that composes and validates them.
 The core principle: **matika itself has zero knowledge of any business domain.**
 All domain logic lives in plugins (AppLugs). The framework provides the
 runtime — pages, menus, persistence, CSRF, i18n, rate limiting — and a clean
-plugin contract for everything else. In the emerging SysPlug architecture (in
-development for v0.0.6, below), even identity and authorization stop being
-hard-wired framework services and become system plugins the recipe composes
-in — or leaves out.
+plugin contract for everything else. In the SysPlug architecture (shipped in
+v0.0.6, below), even identity and authorization stop being hard-wired
+framework services and become system plugins the recipe composes in — or
+leaves out.
 
 ## Hierarchy
 
@@ -30,10 +30,10 @@ application from the outside, but is not part of the running app. `manomatika`
 is the **authority** that pins a specific, validated combination and releases
 it as the product.
 
-## SysPlugs — the emerging composition architecture
+## SysPlugs — the composition architecture
 
-*In development for v0.0.6, unreleased. Shipped releases through v0.0.5 carry
-identity and authorization hard-wired in the framework core.*
+*Shipped in v0.0.6. Releases through v0.0.5 carried identity and
+authorization hard-wired in the framework core.*
 
 Historically matika's users, roles, permissions, and login machinery were
 mandatory core services: every install got them whether its plugins needed
@@ -86,10 +86,9 @@ HTTPS by default (TLS on port 443 with an HTTP→HTTPS redirect and per-install
 CA trust), i18n, rate limiting, CSRF, and a frontend package
 (`@manomatika/matika-frontend`, distributed via GitHub Packages) for plugin
 UIs. Identity and access control — bcrypt + JWT + OAuth login, role-based
-access — ship today as core services and are moving into the sys-identity
-and sys-authorization SysPlugs, which live in matika's own `sysplugs/` tree.
-The core ships no business features — every business page is contributed by
-an AppLug.
+access — ship as the **sys-identity** and **sys-authorization** SysPlugs,
+which live in matika's own `sysplugs/` tree, since v0.0.6. The core ships no
+business features — every business page is contributed by an AppLug.
 
 #### 📊 [eyerate](https://github.com/manomatika/eyerate)
 The reference AppLug for plugins that use authorization, and a child of
@@ -100,9 +99,10 @@ hard-declares `requires: ["identity", "authorization"]` and ships a
 plugin contract end-to-end: manifest, consolidated menu file, role-scoped
 routes, Jinja2 templates, TypeScript admin pages, pluggable data providers
 (Yahoo / Finnhub / Alpha Vantage), and plugin-managed database tables. Adds
-financial security tracking (stocks, bonds, ETFs, mutual funds) to any
-matika host — the fuller worked example for learning the AppLug system, and
-the model for any AppLug that needs identity and roles.
+financial security tracking (stocks, bonds, ETFs, mutual funds) and, since
+v0.0.6, a **Portfolios** page (holdings browse, lots, quote refresh, gain/loss
+tracking) to any matika host — the fuller worked example for learning the
+AppLug system, and the model for any AppLug that needs identity and roles.
 
 #### 🙏 [metta](https://github.com/manomatika/metta)
 The reference AppLug for plugins that use no authentication or authorization,
@@ -123,7 +123,7 @@ recipe declares the exact matika version, SysPlug set, and AppLug versions
 that compose an application, with no ranges and no wildcards. The validator
 enforces cross-component version consistency, verifies remote `applug.json`
 manifests at the declared GitHub tag, checks `RELEASES.md` ↔ git-tag drift,
-and — in the emerging SysPlug architecture — resolves every AppLug's required
+and — under the SysPlug architecture — resolves every AppLug's required
 capabilities against the recipe's SysPlug providers, failing the build on any
 unsatisfied or ambiguous requirement. The build pipeline produces installer
 artifacts (Linux `.deb` / macOS DMG), triggered either on demand via
@@ -139,7 +139,7 @@ code-signing/notarization is on the roadmap.)
 |---|---|
 | **manomatika** | Product authority — pins a validated component set; owns the recipes, manifest, audit log, product release, and QA gate |
 | **matika** | Plugin-agnostic FastAPI framework — runtime, pages, menus, plugin contract |
-| **sysplugs** | System plugins providing framework capabilities — identity, authorization — composed per recipe (emerging, v0.0.6) |
+| **sysplugs** | System plugins providing framework capabilities — identity, authorization — composed per recipe (shipped in v0.0.6) |
 | **applugs** | Plugins providing all business-domain features, each a reference implementation of a kind of AppLug — e.g. eyerate (uses authorization), metta (uses none) — with more added as the project continues |
 | **ahimsa** | Recipe engine — builds and validates an application from pinned component versions |
 
@@ -154,7 +154,7 @@ bundled matika.
 `VERSION` is the single source of truth for version metadata in each repo;
 tooling propagates it to all version-bearing files and detects drift in CI.
 Recipes pin each component by exact version — no ranges, no wildcards — and
-the emerging `sysplugs[]` section is pinned the same way. A product manifest
+the `sysplugs[]` section is pinned the same way. A product manifest
 pins each component by **tag and resolved commit SHA**.
 
 `RELEASES.md` is the canonical, manomatika-wide tag log. Its human-edited
@@ -169,16 +169,18 @@ with the validated installer attached.
 
 ## Project Status
 
-**ManoMatika v0.0.5 is released** (2026-08-18) — the fifth product release:
-**matika v0.0.8 + eyerate v0.0.8 + ahimsa v0.0.5**, QA-gate validated on Linux
+**ManoMatika v0.0.6 is released** (2026-09-04) — the sixth product release:
+**matika v0.0.9 + eyerate v0.0.9 + ahimsa v0.0.6**, QA-gate validated on Linux
 x86_64 and macOS arm64, with installers available on the
-[v0.0.5 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.5).
-The Linux `.deb` installer ships with a detached GPG signature — see
+[v0.0.6 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.6).
+v0.0.6 ships the SysPlug architecture described above — identity and
+authorization extracted from matika core into recipe-composed system
+plugins (sys-identity, sys-authorization) — alongside a large Standard Form
+v2 browse expansion (server-side search, aggregates, grouping, column
+reorder/hide, Saved Views), a new Portfolios page for eyerate, expanded
+export/import data categories, and session idle-timeout handling. The Linux
+`.deb` installer ships with a detached GPG signature — see
 **Verifying Releases** below.
-
-In development: **v0.0.6** introduces the SysPlug architecture described
-above — identity and authorization as recipe-composed system plugins, the
-metta reference AppLug, and multi-composition build validation.
 
 As of v0.0.3 the supported platform set is **Linux x86_64** (`.deb`) and
 **macOS arm64** (`.dmg`); Windows and macOS x86_64 shipped last in v0.0.2.
