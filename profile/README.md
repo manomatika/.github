@@ -114,8 +114,7 @@ capability surface, metta shows the floor: how small a complete, shippable
 AppLug can be while still carrying everything the contract demands — manifest,
 routes, templates, `en`/`es` locales, tests, CI. Start here to learn the
 plugin contract; graduate to eyerate when your AppLug needs identity and
-roles. (metta is unreleased, in-progress work — not yet part of a shipped
-ManoMatika product.)
+roles. (metta first shipped in ManoMatika v0.0.7.)
 
 ### 🛠️ [ahimsa](https://github.com/manomatika/ahimsa)
 The recipe **engine** — build, validation, and release *mechanism* only. A
@@ -163,29 +162,38 @@ source (`release-log.yaml`) and the generated `RELEASES.md` live in
 from manomatika-hosted data and validates it bidirectionally against git
 tags. Entries are repo-aware (`## <repo> vX.Y.Z`).
 
-Components ship as **prereleases**; nothing is blessed before QA. Only after
-a candidate passes the QA gate is the **ManoMatika product release** cut,
-with the validated installer attached.
+Components ship as plain git tags, never as their own GitHub Releases; nothing
+is blessed before QA. Only after a candidate passes the QA gate is the
+**ManoMatika product release** cut, with the validated installer attached.
 
 ## Project Status
 
-**ManoMatika v0.0.6 is released** (2026-09-04) — the sixth product release:
-**matika v0.0.9 + eyerate v0.0.9 + ahimsa v0.0.6**, QA-gate validated on Linux
-x86_64 and macOS arm64, with installers available on the
-[v0.0.6 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.6).
-v0.0.6 ships the SysPlug architecture described above — identity and
-authorization extracted from matika core into recipe-composed system
-plugins (sys-identity, sys-authorization) — alongside a large Standard Form
-v2 browse expansion (server-side search, aggregates, grouping, column
-reorder/hide, Saved Views), a new Portfolios page for eyerate, expanded
-export/import data categories, and session idle-timeout handling. The Linux
-`.deb` installer ships with a detached GPG signature — see
-**Verifying Releases** below.
+**ManoMatika v0.0.7 is released** (2026-10-12) — the seventh product release:
+**matika v0.0.10 + eyerate v0.0.10 + metta v0.0.2 + ahimsa v0.0.7**,
+QA-gate validated on Linux x86_64 and macOS arm64, with installers available on the
+[v0.0.7 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.7).
+v0.0.7 is the first product release to include the metta reference AppLug,
+and it completes the Standard Form v2 browse and saved-search work (typed
+columns and aggregates, Saved Search scopes and ownership, Saved View on every
+grid page, a browse/maintenance splitter, row details and summary strips). It
+also tightens security across admin routes, first-administrator bootstrap,
+content-security policy and step-up authentication, and adds a broad
+accessibility, dark-mode and keyboard pass. The Linux `.deb` installer ships
+with a detached GPG signature — see **Verifying Releases** below.
 
-As of v0.0.3 the supported platform set is **Linux x86_64** (`.deb`) and
-**macOS arm64** (`.dmg`); Windows and macOS x86_64 shipped last in v0.0.2.
-The macOS installer is currently unnotarized (code-signing/notarization is on
-the roadmap) — right-click → Open past Gatekeeper on first launch.
+v0.0.6 introduced the SysPlug architecture described above — identity and
+authorization extracted from matika core into recipe-composed system
+plugins (sys-identity, sys-authorization) — and eyerate's Portfolios page.
+
+**Installing.** Download the installer for your platform from the
+[v0.0.7 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.7):
+`manomatika-0.0.7-linux-x86_64.deb` for Linux x86_64, or
+`manomatika-0.0.7-macos-arm64.dmg` for macOS arm64. The supported platform set
+is **Linux x86_64** (`.deb`) and **macOS arm64** (`.dmg`); Windows and macOS
+x86_64 shipped last in v0.0.2. The macOS installer is unsigned
+(code-signing/notarization is on the roadmap): on first launch macOS Gatekeeper
+blocks it, so open System Settings, then Privacy & Security, and choose
+**Open Anyway**.
 
 All repositories remain in active early development (v0.0.x). Backward
 compatibility within a matika minor version is mandatory.
