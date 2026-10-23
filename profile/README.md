@@ -172,8 +172,15 @@ is blessed before QA. Only after a candidate passes the QA gate is the
 **matika v0.0.11 + eyerate v0.0.11 + metta v0.0.3 + ahimsa v0.0.8**,
 QA-gate validated on Linux x86_64 and macOS arm64, with installers available on the
 [v0.0.8 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.8).
-v0.0.7 was the first product release to include the metta reference AppLug,
-and it completes the Standard Form v2 browse and saved-search work (typed
+
+v0.0.8 adds a generic settings page for AppLugs, where each AppLug declares its own
+settings and secret fields are stored encrypted. It adds a configurable Confirm-Identity
+Window for sensitive changes, CSRF-protected login and logout, and opt-in reverse-proxy
+support. It also tightens file permissions, HTTPS redirect handling and security headers,
+and enforces foreign keys and unique constraints in SQLite.
+
+v0.0.7 was the first product release to include the metta reference AppLug and completed
+the Standard Form v2 browse and saved-search work (typed
 columns and aggregates, Saved Search scopes and ownership, Saved View on every
 grid page, a browse/maintenance splitter, row details and summary strips). It
 also tightens security across admin routes, first-administrator bootstrap,
