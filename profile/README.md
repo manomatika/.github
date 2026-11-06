@@ -168,12 +168,18 @@ is blessed before QA. Only after a candidate passes the QA gate is the
 
 ## Project Status
 
-**ManoMatika v0.0.9 is released** (2026-10-28) — the ninth product release:
-**matika v0.0.12 + eyerate v0.0.12 + metta v0.0.4 + ahimsa v0.0.9**,
+**ManoMatika v0.0.10 is released** (2026-11-06) — the tenth product release:
+**matika v0.0.13 + eyerate v0.0.13 + metta v0.0.5 + ahimsa v0.0.10**,
 QA-gate validated on Linux x86_64 and macOS arm64, with installers available on the
-[v0.0.9 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.9).
+[v0.0.10 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.10).
 
-v0.0.9 is a security-and-integrity release. It hardens access control and credential
+v0.0.10 adds a Third-party notices page that lists every installed package with its
+version and license, a clearer About page, and a default `User` role that holds Viewer
+access, not Admin, on the eyerate Securities and Portfolios pages. The eyerate Portfolios
+page also gains a Delete holding control, and the Bulk Add and Bulk Delete flows report
+duplicate symbols and filter existing securities more clearly.
+
+v0.0.9 was a security-and-integrity release. It hardens access control and credential
 handling across matika and eyerate, changes the password rules, and makes the build
 stamp channel-aware. It adds the AppLug external-origins contract, which lets an
 AppLug declare the external origins it loads from, and a Map page to the metta
@@ -199,9 +205,9 @@ authorization extracted from matika core into recipe-composed system
 plugins (sys-identity, sys-authorization) — and eyerate's Portfolios page.
 
 **Installing.** Download the installer for your platform from the
-[v0.0.9 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.9):
-`manomatika-0.0.9-linux-x86_64.deb` for Linux x86_64, or
-`manomatika-0.0.9-macos-arm64.dmg` for macOS arm64. The supported platform set
+[v0.0.10 release page](https://github.com/manomatika/manomatika/releases/tag/v0.0.10):
+`manomatika-0.0.10-linux-x86_64.deb` for Linux x86_64, or
+`manomatika-0.0.10-macos-arm64.dmg` for macOS arm64. The supported platform set
 is **Linux x86_64** (`.deb`) and **macOS arm64** (`.dmg`); Windows and macOS
 x86_64 shipped last in v0.0.2. The macOS installer is unsigned
 (code-signing/notarization is on the roadmap): on first launch macOS Gatekeeper
